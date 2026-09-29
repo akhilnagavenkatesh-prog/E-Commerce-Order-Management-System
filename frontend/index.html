@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Commerce Order Management System | DBMS Project Dashboard</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6 Icons (CDN with local SVG fallbacks) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Chart.js CDN for Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Project CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="light">
+  <!-- Main Application Wrapper -->
+  <div class="app-layout">
+
+    <!-- Mobile Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          <div class="logo-icon">
+            <i class="fa-solid fa-database"></i>
+          </div>
+          <div class="brand-text">
+            <h3>DBMS Portal</h3>
+            <span class="badge-tag">E-Commerce</span>
+          </div>
+        </div>
+        <button class="close-sidebar-btn" id="closeSidebarBtn" aria-label="Close sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">MAIN NAVIGATION</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#dashboard" class="nav-link active" data-page="dashboard">
+              <i class="fa-solid fa-chart-pie nav-icon"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#customers" class="nav-link" data-page="customers">
+              <i class="fa-solid fa-users nav-icon"></i>
+              <span>Customers</span>
+              <span class="nav-badge" id="sidebarCustomerCount">8</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#products" class="nav-link" data-page="products">
+              <i class="fa-solid fa-box-open nav-icon"></i>
+              <span>Products</span>
+              <span class="nav-badge" id="sidebarProductCount">10</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#orders" class="nav-link" data-page="orders">
+              <i class="fa-solid fa-cart-shopping nav-icon"></i>
+              <span>Orders</span>
+              <span class="nav-badge" id="sidebarOrderCount">8</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#order-items" class="nav-link" data-page="order-items">
+              <i class="fa-solid fa-receipt nav-icon"></i>
+              <span>Order Items</span>
+              <span class="nav-badge" id="sidebarItemCount">14</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="nav-section-title">DATABASE & INFO</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#sql-operations" class="nav-link" data-page="sql-operations">
+              <i class="fa-solid fa-code nav-icon"></i>
+              <span>SQL Operations</span>
+              <span class="nav-pulse">LIVE</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#about-project" class="nav-link" data-page="about-project">
+              <i class="fa-solid fa-circle-info nav-icon"></i>
+              <span>About Project</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Relational Schema Flow Widget -->
+      <div class="sidebar-footer">
+        <div class="schema-mini-card">
+          <div class="schema-mini-header">
+            <i class="fa-solid fa-diagram-project"></i>
+            <span>Relational Schema</span>
+          </div>
+          <div class="schema-flow-pills">
+            <span class="schema-pill" title="Primary Entity">CUSTOMER</span>
+            <i class="fa-solid fa-arrow-down-long"></i>
+            <span class="schema-pill" title="1-to-N Orders">ORDERS</span>
+            <i class="fa-solid fa-arrow-down-long"></i>
+            <span class="schema-pill" title="Bridge Entity">ORDER_ITEM</span>
+            <i class="fa-solid fa-arrow-up-long"></i>
+            <span class="schema-pill" title="Referenced Entity">PRODUCT</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="main-wrapper">
+      
+      <!-- TOP NAVIGATION / HEADER -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="mobile-toggle-btn" id="mobileToggleBtn" aria-label="Toggle sidebar menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="header-title-box">
+            <h1 class="header-title">E-Commerce Order Management System</h1>
+            <div class="db-status-chip">
+              <span class="status-dot pulse"></span>
+              <span class="status-text">Relational DB Engine: <strong>Active</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Global Search -->
+          <div class="header-search">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="globalSearchInput" placeholder="Quick search tables..." aria-label="Search records">
+            <kbd class="search-kbd">/</kbd>
+          </div>
+
+          <!-- Header Actions -->
+          <div class="header-actions">
+            <!-- Reset Sample Data -->
+            <button class="icon-btn" id="resetDbBtn" title="Reset to Sample Database Data">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+
+            <!-- Export SQL Script -->
+            <button class="icon-btn" id="exportSqlBtn" title="Export SQL Insert Statements">
+              <i class="fa-solid fa-file-export"></i>
+            </button>
+
+            <!-- Dark/Light Mode Toggle -->
+            <button class="icon-btn theme-toggle" id="themeToggleBtn" title="Toggle Dark/Light Mode">
+              <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+
+            <!-- Notifications Dropdown -->
+            <div class="notification-wrapper">
+              <button class="icon-btn notification-btn" id="notificationBtn" title="View Notifications">
+                <i class="fa-solid fa-bell"></i>
+                <span class="notification-badge" id="notifBadge">3</span>
+              </button>
+              <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-head">
+                  <h4>System Notifications</h4>
+                  <span class="badge-tag">Recent</span>
+                </div>
+                <div class="notification-list" id="notificationList">
+                  <div class="notif-item unread">
+                    <div class="notif-icon bg-indigo"><i class="fa-solid fa-database"></i></div>
+                    <div class="notif-content">
+                      <p>Database seeded with sample Customers, Products & Orders</p>
+                      <small>Just now</small>
+                    </div>
+                  </div>
+                  <div class="notif-item">
+                    <div class="notif-icon bg-green"><i class="fa-solid fa-check-double"></i></div>
+                    <div class="notif-content">
+                      <p>Foreign key referential integrity active</p>
+                      <small>10 mins ago</small>
+                    </div>
+                  </div>
+                  <div class="notif-item">
+                    <div class="notif-icon bg-amber"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="notif-content">
+                      <p>Product "Dell XPS 15" stock is running low (&lt; 15 units)</p>
+                      <small>1 hour ago</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- User / Academic Profile -->
+            <div class="profile-chip" id="profileChip">
+              <div class="profile-avatar">
+                <span>AV</span>
+              </div>
+              <div class="profile-info">
+                <span class="profile-name">Akhil & Team</span>
+                <span class="profile-role">25B11AI416</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT CONTAINER -->
+      <main class="page-container">
+
+        <!-- ============================================== -->
+        <!-- 1. DASHBOARD PAGE -->
+        <!-- ============================================== -->
+        <section class="page-view active" id="view-dashboard">
+          
+          <!-- Banner: Relational Architecture Visualizer -->
+          <div class="dashboard-hero-card">
+            <div class="hero-content">
+              <div class="hero-badge"><i class="fa-solid fa-server"></i> Relational DBMS Architecture</div>
+              <h2>Relational Flow & Order Lifecycle</h2>
+              <p>Explore the relational schema: Customers place Orders, Orders contain Order Items, and Order Items reference Products with foreign key constraints.</p>
+              
+              <div class="relational-pipeline">
+                <div class="pipeline-node" onclick="app.navigateTo('customers')">
+                  <div class="node-icon bg-indigo"><i class="fa-solid fa-users"></i></div>
+                  <div class="node-text">
+                    <strong>CUSTOMER</strong>
+                    <span>PK: Customer_ID</span>
+                  </div>
+                </div>
+                <div class="pipeline-connector">
+                  <span class="connector-label">1 : N (Places)</span>
+                  <div class="connector-line"></div>
+                </div>
+                <div class="pipeline-node" onclick="app.navigateTo('orders')">
+                  <div class="node-icon bg-purple"><i class="fa-solid fa-cart-shopping"></i></div>
+                  <div class="node-text">
+                    <strong>ORDERS</strong>
+                    <span>PK: Order_ID | FK: Customer_ID</span>
+                  </div>
+                </div>
+                <div class="pipeline-connector">
+                  <span class="connector-label">1 : N (Contains)</span>
+                  <div class="connector-line"></div>
+                </div>
+                <div class="pipeline-node" onclick="app.navigateTo('order-items')">
+                  <div class="node-icon bg-cyan"><i class="fa-solid fa-receipt"></i></div>
+                  <div class="node-text">
+                    <strong>ORDER_ITEM</strong>
+                    <span>FK: Order_ID & Product_ID</span>
+                  </div>
+                </div>
+                <div class="pipeline-connector">
+                  <span class="connector-label">N : 1 (Ref)</span>
+                  <div class="connector-line"></div>
+                </div>
+                <div class="pipeline-node" onclick="app.navigateTo('products')">
+                  <div class="node-icon bg-emerald"><i class="fa-solid fa-box-open"></i></div>
+                  <div class="node-text">
+                    <strong>PRODUCT</strong>
+                    <span>PK: Product_ID</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="hero-actions">
+              <button class="btn btn-white" onclick="app.navigateTo('sql-operations')">
+                <i class="fa-solid fa-terminal"></i> Open SQL Runner
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 Statistics Cards -->
+          <div class="stats-grid">
+            <!-- Stat 1: Customers -->
+            <div class="stat-card" onclick="app.navigateTo('customers')">
+              <div class="stat-header">
+                <div class="stat-title">Total Customers</div>
+                <div class="stat-icon-wrapper bg-indigo-light">
+                  <i class="fa-solid fa-users text-indigo"></i>
+                </div>
+              </div>
+              <div class="stat-value" id="statTotalCustomers">0</div>
+              <div class="stat-footer">
+                <span class="stat-trend positive"><i class="fa-solid fa-arrow-trend-up"></i> 100% Verified</span>
+                <span class="stat-subtext">Registered Buyers</span>
+              </div>
+              <div class="card-glow glow-indigo"></div>
+            </div>
+
+            <!-- Stat 2: Products -->
+            <div class="stat-card" onclick="app.navigateTo('products')">
+              <div class="stat-header">
+                <div class="stat-title">Total Products</div>
+                <div class="stat-icon-wrapper bg-emerald-light">
+                  <i class="fa-solid fa-box-open text-emerald"></i>
+                </div>
+              </div>
+              <div class="stat-value" id="statTotalProducts">0</div>
+              <div class="stat-footer">
+                <span class="stat-trend" id="statLowStockBadge"><i class="fa-solid fa-boxes-stacked"></i> In Catalog</span>
+                <span class="stat-subtext" id="statCategoriesCount">Across 6 Categories</span>
+              </div>
+              <div class="card-glow glow-emerald"></div>
+            </div>
+
+            <!-- Stat 3: Orders -->
+            <div class="stat-card" onclick="app.navigateTo('orders')">
+              <div class="stat-header">
+                <div class="stat-title">Total Orders</div>
+                <div class="stat-icon-wrapper bg-purple-light">
+                  <i class="fa-solid fa-cart-shopping text-purple"></i>
+                </div>
+              </div>
+              <div class="stat-value" id="statTotalOrders">0</div>
+              <div class="stat-footer">
+                <span class="stat-trend positive" id="statOrderRevenue">$0.00</span>
+                <span class="stat-subtext">Cumulative Sales</span>
+              </div>
+              <div class="card-glow glow-purple"></div>
+            </div>
+
+            <!-- Stat 4: Order Items -->
+            <div class="stat-card" onclick="app.navigateTo('order-items')">
+              <div class="stat-header">
+                <div class="stat-title">Total Order Items</div>
+                <div class="stat-icon-wrapper bg-cyan-light">
+                  <i class="fa-solid fa-receipt text-cyan"></i>
+                </div>
+              </div>
+              <div class="stat-value" id="statTotalOrderItems">0</div>
+              <div class="stat-footer">
+                <span class="stat-trend positive" id="statUnitsSold">0 Units</span>
+                <span class="stat-subtext">Total Quantity Sold</span>
+              </div>
+              <div class="card-glow glow-cyan"></div>
+            </div>
+          </div>
+
+          <!-- Charts Section: Order Statistics -->
+          <div class="charts-grid">
+            <div class="card chart-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-chart-donut"></i> Order Status Distribution</h3>
+                  <p class="card-subtitle">Visual breakdown of live orders by fulfillment state</p>
+                </div>
+                <div class="badge-tag">Dynamic SQL Aggregation</div>
+              </div>
+              <div class="chart-container doughnut-wrapper">
+                <canvas id="orderStatusChart"></canvas>
+              </div>
+            </div>
+
+            <div class="card chart-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-chart-column"></i> Category Stock & Inventory</h3>
+                  <p class="card-subtitle">Available warehouse stock across product categories</p>
+                </div>
+                <div class="badge-tag">Stock Watch</div>
+              </div>
+              <div class="chart-container">
+                <canvas id="categoryStockChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dual Section: Recent Orders & Product Overview -->
+          <div class="dashboard-split-grid">
+            
+            <!-- Recent Orders Table -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Orders</h3>
+                  <p class="card-subtitle">Latest transactions with linked customer information</p>
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="app.navigateTo('orders')">
+                  View All Orders <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table" id="dashboardRecentOrdersTable">
+                  <thead>
+                    <tr>
+                      <th>Order ID</th>
+                      <th>Customer</th>
+                      <th>Order Date</th>
+                      <th>Total Amount</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboardRecentOrdersBody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Product Overview / Stock & Categories -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-layer-group"></i> Product Overview</h3>
+                  <p class="card-subtitle">Category metrics & critical stock alerts</p>
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="app.navigateTo('products')">
+                  Manage Products <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+              <div class="product-overview-content" id="productOverviewContainer">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- 2. CUSTOMERS PAGE -->
+        <!-- ============================================== -->
+        <section class="page-view" id="view-customers">
+          <div class="page-header-row">
+            <div>
+              <h2 class="view-title">Customers Management</h2>
+              <p class="view-subtitle">Relational Entity: <code>CUSTOMER(Customer_ID, Customer_Name, Email, Phone, Address)</code></p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-primary" onclick="app.openAddCustomerModal()">
+                <i class="fa-solid fa-user-plus"></i> Add Customer
+              </button>
+            </div>
+          </div>
+
+          <!-- Table Filter & Search Card -->
+          <div class="card table-card">
+            <div class="table-toolbar">
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="customerSearchInput" placeholder="Search by name, email, ID, or phone..." oninput="app.filterCustomers()">
+              </div>
+              <div class="toolbar-stats">
+                <span class="badge-tag" id="customerCountBadge">Showing 8 records</span>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Customer ID</th>
+                    <th>Customer Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Orders</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="customersTableBody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="table-footer-info" id="customerTableFooter">
+              <!-- Count info -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- 3. PRODUCTS PAGE -->
+        <!-- ============================================== -->
+        <section class="page-view" id="view-products">
+          <div class="page-header-row">
+            <div>
+              <h2 class="view-title">Products Management</h2>
+              <p class="view-subtitle">Relational Entity: <code>PRODUCT(Product_ID, Product_Name, Category, Price, Stock)</code></p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-primary" onclick="app.openAddProductModal()">
+                <i class="fa-solid fa-plus"></i> Add Product
+              </button>
+            </div>
+          </div>
+
+          <!-- Table Filter & Search Card -->
+          <div class="card table-card">
+            <div class="table-toolbar">
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="productSearchInput" placeholder="Search by product name, category, or ID..." oninput="app.filterProducts()">
+              </div>
+              <div class="toolbar-filters">
+                <select id="productCategoryFilter" onchange="app.filterProducts()" class="form-select">
+                  <option value="">All Categories</option>
+                  <!-- Populated dynamically -->
+                </select>
+                <select id="productStockFilter" onchange="app.filterProducts()" class="form-select">
+                  <option value="">All Stock Levels</option>
+                  <option value="in_stock">In Stock (&gt; 15)</option>
+                  <option value="low_stock">Low Stock (1 - 15)</option>
+                  <option value="out_of_stock">Out of Stock (0)</option>
+                </select>
+              </div>
+              <div class="toolbar-stats">
+                <span class="badge-tag" id="productCountBadge">Showing 10 records</span>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer-info" id="productTableFooter">
+              <!-- Count info -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- 4. ORDERS PAGE -->
+        <!-- ============================================== -->
+        <section class="page-view" id="view-orders">
+          <div class="page-header-row">
+            <div>
+              <h2 class="view-title">Orders Management</h2>
+              <p class="view-subtitle">Relational Entity: <code>ORDERS(Order_ID, Customer_ID [FK], Order_Date, Total_Amount, Status)</code></p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-primary" onclick="app.openAddOrderModal()">
+                <i class="fa-solid fa-cart-plus"></i> Create Order
+              </button>
+            </div>
+          </div>
+
+          <!-- Table Filter & Search Card -->
+          <div class="card table-card">
+            <div class="table-toolbar">
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="orderSearchInput" placeholder="Search by Order ID, Customer ID, or Name..." oninput="app.filterOrders()">
+              </div>
+              <div class="toolbar-filters">
+                <select id="orderStatusFilter" onchange="app.filterOrders()" class="form-select">
+                  <option value="">All Statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Processing">Processing</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </div>
+              <div class="toolbar-stats">
+                <span class="badge-tag" id="orderCountBadge">Showing 8 records</span>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer ID</th>
+                    <th>Order Date</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer-info" id="orderTableFooter">
+              <!-- Count info -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- 5. ORDER ITEMS PAGE -->
+        <!-- ============================================== -->
+        <section class="page-view" id="view-order-items">
+          <div class="page-header-row">
+            <div>
+              <h2 class="view-title">Order Items Management</h2>
+              <p class="view-subtitle">Relational Bridge Entity: <code>ORDER_ITEM(Order_Item_ID, Order_ID [FK], Product_ID [FK], Quantity, Price)</code></p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-primary" onclick="app.openAddOrderItemModal()">
+                <i class="fa-solid fa-plus"></i> Add Order Item
+              </button>
+            </div>
+          </div>
+
+          <!-- Table Filter & Search Card -->
+          <div class="card table-card">
+            <div class="table-toolbar">
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="orderItemSearchInput" placeholder="Search by Item ID, Order ID, Product ID..." oninput="app.filterOrderItems()">
+              </div>
+              <div class="toolbar-filters">
+                <select id="orderItemOrderFilter" onchange="app.filterOrderItems()" class="form-select">
+                  <option value="">Filter by Order ID</option>
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+              <div class="toolbar-stats">
+                <span class="badge-tag" id="orderItemCountBadge">Showing 14 records</span>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order Item ID</th>
+                    <th>Order ID</th>
+                    <th>Product ID</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Subtotal</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="orderItemsTableBody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer-info" id="orderItemTableFooter">
+              <!-- Count info -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- 6. SQL OPERATIONS PAGE -->
+        <!-- ============================================== -->
+        <section class="page-view" id="view-sql-operations">
+          <div class="page-header-row">
+            <div>
+              <h2 class="view-title">DBMS SQL Operations Showcase</h2>
+              <p class="view-subtitle">Visual demonstration of DDL, DML, DQL, and multi-table Relational JOIN operations</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-outline" onclick="app.exportSqlScript()">
+                <i class="fa-solid fa-download"></i> Download Full SQL Schema
+              </button>
+            </div>
+          </div>
+
+          <!-- Interactive Live SQL Simulator -->
+          <div class="card sql-simulator-card">
+            <div class="card-header">
+              <div class="simulator-title-box">
+                <div class="terminal-dots">
+                  <span class="dot red"></span>
+                  <span class="dot yellow"></span>
+                  <span class="dot green"></span>
+                </div>
+                <h3><i class="fa-solid fa-terminal"></i> Interactive Live SQL Query Runner</h3>
+              </div>
+              <div class="live-status-pill">
+                <i class="fa-solid fa-bolt"></i> Live In-Browser Execution
+              </div>
+            </div>
+
+            <div class="sql-simulator-body">
+              <div class="quick-sql-chips">
+                <span class="chip-label">Quick Run:</span>
+                <button class="sql-chip" onclick="app.setQueryAndRun('SELECT * FROM CUSTOMER;')">SELECT * FROM CUSTOMER</button>
+                <button class="sql-chip" onclick="app.setQueryAndRun('SELECT * FROM PRODUCT WHERE Stock < 20;')">Low Stock Products</button>
+                <button class="sql-chip" onclick="app.setQueryAndRun('SELECT ORDERS.Order_ID, CUSTOMER.Customer_Name, ORDERS.Order_Date, ORDERS.Total_Amount, ORDERS.Status FROM ORDERS JOIN CUSTOMER ON ORDERS.Customer_ID = CUSTOMER.Customer_ID;')">JOIN: Orders &amp; Customers</button>
+                <button class="sql-chip" onclick="app.setQueryAndRun('SELECT ORDERS.Order_ID, CUSTOMER.Customer_Name, PRODUCT.Product_Name, ORDER_ITEM.Quantity, ORDER_ITEM.Price FROM ORDER_ITEM JOIN ORDERS ON ORDER_ITEM.Order_ID = ORDERS.Order_ID JOIN CUSTOMER ON ORDERS.Customer_ID = CUSTOMER.Customer_ID JOIN PRODUCT ON ORDER_ITEM.Product_ID = PRODUCT.Product_ID;')">Multi-Table 4-Entity JOIN</button>
+                <button class="sql-chip" onclick="app.setQueryAndRun('SELECT Status, COUNT(*) AS Order_Count, SUM(Total_Amount) AS Total_Value FROM ORDERS GROUP BY Status;')">GROUP BY: Order Status</button>
+              </div>
+
+              <div class="query-input-wrapper">
+                <textarea id="sqlQueryInput" rows="3" placeholder="Enter standard SQL query (e.g. SELECT * FROM ORDERS JOIN CUSTOMER ON ORDERS.Customer_ID = CUSTOMER.Customer_ID)...">SELECT ORDERS.Order_ID, CUSTOMER.Customer_Name, ORDERS.Order_Date, ORDERS.Total_Amount, ORDERS.Status 
+FROM ORDERS 
+JOIN CUSTOMER ON ORDERS.Customer_ID = CUSTOMER.Customer_ID;</textarea>
+                <div class="query-actions-bar">
+                  <span class="sql-hint"><i class="fa-solid fa-circle-question"></i> Select presets or type custom SELECT query</span>
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-outline" onclick="app.clearSqlQuery()">Clear</button>
+                    <button class="btn btn-sm btn-primary" onclick="app.executeLiveSqlQuery()">
+                      <i class="fa-solid fa-play"></i> Execute Query
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SQL Query Result Display -->
+              <div class="sql-result-box" id="sqlResultBox">
+                <div class="sql-result-header">
+                  <span id="sqlResultStats"><i class="fa-solid fa-circle-check text-emerald"></i> Ready to run queries</span>
+                  <button class="btn-link" onclick="app.copyQueryResult()" id="copyResultBtn" style="display: none;">
+                    <i class="fa-regular fa-copy"></i> Copy Result
+                  </button>
+                </div>
+                <div class="table-responsive sql-table-scroll" id="sqlResultTableWrapper">
+                  <div class="empty-query-hint">
+                    <i class="fa-solid fa-database"></i>
+                    <p>Click "Execute Query" or choose a quick preset above to view live relational query execution results.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Structured SQL Operations Tabs & Code Blocks -->
+          <div class="sql-tabs-container">
+            <div class="sql-tab-buttons">
+              <button class="sql-tab-btn active" data-tab="tab-all">All Operations</button>
+              <button class="sql-tab-btn" data-tab="tab-ddl">DDL (Definition)</button>
+              <button class="sql-tab-btn" data-tab="tab-dml">DML (Manipulation)</button>
+              <button class="sql-tab-btn" data-tab="tab-dql">DQL (Query)</button>
+              <button class="sql-tab-btn" data-tab="tab-joins">Relational JOINs</button>
+            </div>
+
+            <!-- TAB 1: DDL OPERATIONS -->
+            <div class="sql-tab-content active" id="tab-ddl">
+              <div class="sql-category-banner">
+                <div class="category-icon bg-indigo"><i class="fa-solid fa-hammer"></i></div>
+                <div>
+                  <h3>DDL: Data Definition Language</h3>
+                  <p>Defines the database schema, entity structures, constraints, primary keys, and foreign keys.</p>
+                </div>
+              </div>
+
+              <div class="sql-cards-grid">
+                <!-- Create Customer Table -->
+                <div class="code-card">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-table"></i> 1. CREATE TABLE CUSTOMER</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-keyword">CREATE TABLE</span> <span class="sql-table">CUSTOMER</span> (
+    <span class="sql-column">Customer_ID</span>   <span class="sql-type">VARCHAR(20)</span>  <span class="sql-keyword">PRIMARY KEY</span>,
+    <span class="sql-column">Customer_Name</span> <span class="sql-type">VARCHAR(100)</span> <span class="sql-keyword">NOT NULL</span>,
+    <span class="sql-column">Email</span>         <span class="sql-type">VARCHAR(100)</span> <span class="sql-keyword">UNIQUE NOT NULL</span>,
+    <span class="sql-column">Phone</span>         <span class="sql-type">VARCHAR(20)</span>  <span class="sql-keyword">NOT NULL</span>,
+    <span class="sql-column">Address</span>       <span class="sql-type">VARCHAR(255)</span> <span class="sql-keyword">NOT NULL</span>
+);</code></pre>
+                </div>
+
+                <!-- Create Product Table -->
+                <div class="code-card">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-table"></i> 2. CREATE TABLE PRODUCT</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-keyword">CREATE TABLE</span> <span class="sql-table">PRODUCT</span> (
+    <span class="sql-column">Product_ID</span>   <span class="sql-type">VARCHAR(20)</span>   <span class="sql-keyword">PRIMARY KEY</span>,
+    <span class="sql-column">Product_Name</span> <span class="sql-type">VARCHAR(150)</span>  <span class="sql-keyword">NOT NULL</span>,
+    <span class="sql-column">Category</span>     <span class="sql-type">VARCHAR(50)</span>   <span class="sql-keyword">NOT NULL</span>,
+    <span class="sql-column">Price</span>        <span class="sql-type">DECIMAL(10,2)</span> <span class="sql-keyword">NOT NULL CHECK</span> (Price &gt; 0),
+    <span class="sql-column">Stock</span>        <span class="sql-type">INT</span>           <span class="sql-keyword">NOT NULL DEFAULT</span> 0
+);</code></pre>
+                </div>
+
+                <!-- Create Orders Table -->
+                <div class="code-card">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-table"></i> 3. CREATE TABLE ORDERS</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-keyword">CREATE TABLE</span> <span class="sql-table">ORDERS</span> (
+    <span class="sql-column">Order_ID</span>     <span class="sql-type">VARCHAR(20)</span>   <span class="sql-keyword">PRIMARY KEY</span>,
+    <span class="sql-column">Customer_ID</span>  <span class="sql-type">VARCHAR(20)</span>   <span class="sql-keyword">NOT NULL</span>,
+    <span class="sql-column">Order_Date</span>   <span class="sql-type">DATE</span>          <span class="sql-keyword">NOT NULL</span>,
+    <span class="sql-column">Total_Amount</span> <span class="sql-type">DECIMAL(10,2)</span> <span class="sql-keyword">NOT NULL DEFAULT</span> 0.00,
+    <span class="sql-column">Status</span>       <span class="sql-type">VARCHAR(30)</span>   <span class="sql-keyword">DEFAULT</span> <span class="sql-string">'Pending'</span>,
+    <span class="sql-keyword">FOREIGN KEY</span> (Customer_ID) 
+        <span class="sql-keyword">REFERENCES</span> <span class="sql-table">CUSTOMER</span>(Customer_ID) 
+        <span class="sql-keyword">ON DELETE RESTRICT ON UPDATE CASCADE</span>
+);</code></pre>
+                </div>
+
+                <!-- Create Order Item Table -->
+                <div class="code-card">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-table"></i> 4. CREATE TABLE ORDER_ITEM</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-keyword">CREATE TABLE</span> <span class="sql-table">ORDER_ITEM</span> (
+    <span class="sql-column">Order_Item_ID</span> <span class="sql-type">VARCHAR(20)</span>   <span class="sql-keyword">PRIMARY KEY</span>,
+    <span class="sql-column">Order_ID</span>      <span class="sql-type">VARCHAR(20)</span>   <span class="sql-keyword">NOT NULL</span>,
+    <span class="sql-column">Product_ID</span>    <span class="sql-type">VARCHAR(20)</span>   <span class="sql-keyword">NOT NULL</span>,
+    <span class="sql-column">Quantity</span>      <span class="sql-type">INT</span>           <span class="sql-keyword">NOT NULL CHECK</span> (Quantity &gt; 0),
+    <span class="sql-column">Price</span>         <span class="sql-type">DECIMAL(10,2)</span> <span class="sql-keyword">NOT NULL</span>,
+    <span class="sql-keyword">FOREIGN KEY</span> (Order_ID) 
+        <span class="sql-keyword">REFERENCES</span> <span class="sql-table">ORDERS</span>(Order_ID) 
+        <span class="sql-keyword">ON DELETE CASCADE ON UPDATE CASCADE</span>,
+    <span class="sql-keyword">FOREIGN KEY</span> (Product_ID) 
+        <span class="sql-keyword">REFERENCES</span> <span class="sql-table">PRODUCT</span>(Product_ID) 
+        <span class="sql-keyword">ON DELETE RESTRICT ON UPDATE CASCADE</span>
+);</code></pre>
+                </div>
+
+                <!-- Alter and Drop Examples -->
+                <div class="code-card full-width">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-pen-ruler"></i> 5. ALTER &amp; DROP Operations</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-comment">-- ALTER TABLE: Add index for faster query lookup on Customer orders</span>
+<span class="sql-keyword">ALTER TABLE</span> <span class="sql-table">ORDERS</span> <span class="sql-keyword">ADD INDEX</span> idx_orders_customer (Customer_ID);
+
+<span class="sql-comment">-- ALTER TABLE: Add CHECK constraint on Order Status values</span>
+<span class="sql-keyword">ALTER TABLE</span> <span class="sql-table">ORDERS</span> <span class="sql-keyword">ADD CONSTRAINT</span> chk_order_status 
+<span class="sql-keyword">CHECK</span> (Status <span class="sql-keyword">IN</span> (<span class="sql-string">'Pending'</span>, <span class="sql-string">'Processing'</span>, <span class="sql-string">'Shipped'</span>, <span class="sql-string">'Delivered'</span>, <span class="sql-string">'Cancelled'</span>));
+
+<span class="sql-comment">-- DROP TABLE: Drop dependent bridge table first to avoid FK constraint error</span>
+<span class="sql-keyword">DROP TABLE IF EXISTS</span> <span class="sql-table">ORDER_ITEM</span>;
+<span class="sql-keyword">DROP TABLE IF EXISTS</span> <span class="sql-table">ORDERS</span>;
+<span class="sql-keyword">DROP TABLE IF EXISTS</span> <span class="sql-table">PRODUCT</span>;
+<span class="sql-keyword">DROP TABLE IF EXISTS</span> <span class="sql-table">CUSTOMER</span>;</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: DML OPERATIONS -->
+            <div class="sql-tab-content" id="tab-dml">
+              <div class="sql-category-banner">
+                <div class="category-icon bg-purple"><i class="fa-solid fa-pen-to-square"></i></div>
+                <div>
+                  <h3>DML: Data Manipulation Language</h3>
+                  <p>Handles row insertion, state updating, and record deletion while maintaining referential integrity.</p>
+                </div>
+              </div>
+
+              <div class="sql-cards-grid">
+                <!-- INSERT Statements -->
+                <div class="code-card">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-plus"></i> INSERT INTO Operations</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-comment">-- 1. Insert new Customer</span>
+<span class="sql-keyword">INSERT INTO</span> <span class="sql-table">CUSTOMER</span> (Customer_ID, Customer_Name, Email, Phone, Address)
+<span class="sql-keyword">VALUES</span> (<span class="sql-string">'CUST-109'</span>, <span class="sql-string">'Aarav Mehta'</span>, <span class="sql-string">'aarav.m@example.com'</span>, <span class="sql-string">'+91 91234 56780'</span>, <span class="sql-string">'B-14 Banjara Hills, Hyderabad'</span>);
+
+<span class="sql-comment">-- 2. Insert new Product</span>
+<span class="sql-keyword">INSERT INTO</span> <span class="sql-table">PRODUCT</span> (Product_ID, Product_Name, Category, Price, Stock)
+<span class="sql-keyword">VALUES</span> (<span class="sql-string">'PROD-211'</span>, <span class="sql-string">'Mechanical Gaming Keyboard'</span>, <span class="sql-string">'Accessories'</span>, 89.99, 40);
+
+<span class="sql-comment">-- 3. Insert new Order</span>
+<span class="sql-keyword">INSERT INTO</span> <span class="sql-table">ORDERS</span> (Order_ID, Customer_ID, Order_Date, Total_Amount, Status)
+<span class="sql-keyword">VALUES</span> (<span class="sql-string">'ORD-309'</span>, <span class="sql-string">'CUST-109'</span>, <span class="sql-string">'2026-09-29'</span>, 89.99, <span class="sql-string">'Pending'</span>);
+
+<span class="sql-comment">-- 4. Insert Order Item (linking Order & Product)</span>
+<span class="sql-keyword">INSERT INTO</span> <span class="sql-table">ORDER_ITEM</span> (Order_Item_ID, Order_ID, Product_ID, Quantity, Price)
+<span class="sql-keyword">VALUES</span> (<span class="sql-string">'ITEM-415'</span>, <span class="sql-string">'ORD-309'</span>, <span class="sql-string">'PROD-211'</span>, 1, 89.99);</code></pre>
+                </div>
+
+                <!-- UPDATE Statements -->
+                <div class="code-card">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-arrows-rotate"></i> UPDATE Operations</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-comment">-- 1. Update Order Status after shipping</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ORDERS</span> 
+<span class="sql-keyword">SET</span> Status = <span class="sql-string">'Shipped'</span> 
+<span class="sql-keyword">WHERE</span> Order_ID = <span class="sql-string">'ORD-303'</span>;
+
+<span class="sql-comment">-- 2. Deduct product stock after order fulfillment</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">PRODUCT</span> 
+<span class="sql-keyword">SET</span> Stock = Stock - 2 
+<span class="sql-keyword">WHERE</span> Product_ID = <span class="sql-string">'PROD-204'</span>;
+
+<span class="sql-comment">-- 3. Update customer contact details</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">CUSTOMER</span> 
+<span class="sql-keyword">SET</span> Phone = <span class="sql-string">'+91 99999 88888'</span>, Address = <span class="sql-string">'New High Street, Bangalore'</span> 
+<span class="sql-keyword">WHERE</span> Customer_ID = <span class="sql-string">'CUST-101'</span>;</code></pre>
+                </div>
+
+                <!-- DELETE Statements -->
+                <div class="code-card full-width">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-trash-can"></i> DELETE Operations (Referential Integrity Check)</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-comment">-- 1. Delete an order item</span>
+<span class="sql-keyword">DELETE FROM</span> <span class="sql-table">ORDER_ITEM</span> 
+<span class="sql-keyword">WHERE</span> Order_Item_ID = <span class="sql-string">'ITEM-409'</span>;
+
+<span class="sql-comment">-- 2. Delete an entire order (Cascades to child ORDER_ITEM rows via ON DELETE CASCADE)</span>
+<span class="sql-keyword">DELETE FROM</span> <span class="sql-table">ORDERS</span> 
+<span class="sql-keyword">WHERE</span> Order_ID = <span class="sql-string">'ORD-306'</span>;
+
+<span class="sql-comment">-- 3. Attempting to delete a Customer with active orders triggers RESTRICT foreign key error:</span>
+<span class="sql-comment">-- ERROR 1451: Cannot delete or update a parent row: a foreign key constraint fails</span></code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: DQL OPERATIONS -->
+            <div class="sql-tab-content" id="tab-dql">
+              <div class="sql-category-banner">
+                <div class="category-icon bg-cyan"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <div>
+                  <h3>DQL: Data Query Language</h3>
+                  <p>Retrieval, filtering, sorting, and aggregate analytics over e-commerce entity tables.</p>
+                </div>
+              </div>
+
+              <div class="sql-cards-grid">
+                <!-- Basic SELECT Queries -->
+                <div class="code-card">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-table-list"></i> 1. Standard Table Selections</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-comment">-- Retrieve all customers</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> <span class="sql-table">CUSTOMER</span>;
+
+<span class="sql-comment">-- Retrieve all products</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> <span class="sql-table">PRODUCT</span>;
+
+<span class="sql-comment">-- Retrieve all orders</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> <span class="sql-table">ORDERS</span>;
+
+<span class="sql-comment">-- Retrieve all order items</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> <span class="sql-table">ORDER_ITEM</span>;</code></pre>
+                </div>
+
+                <!-- Filtered and Sorted Queries -->
+                <div class="code-card">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-filter"></i> 2. Filtered &amp; Sorted Queries</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-comment">-- Filter low-stock products sorted by price descending</span>
+<span class="sql-keyword">SELECT</span> Product_ID, Product_Name, Category, Price, Stock
+<span class="sql-keyword">FROM</span> <span class="sql-table">PRODUCT</span>
+<span class="sql-keyword">WHERE</span> Stock &lt; 20
+<span class="sql-keyword">ORDER BY</span> Price <span class="sql-keyword">DESC</span>;
+
+<span class="sql-comment">-- Find pending or processing orders above $200</span>
+<span class="sql-keyword">SELECT</span> Order_ID, Customer_ID, Order_Date, Total_Amount, Status
+<span class="sql-keyword">FROM</span> <span class="sql-table">ORDERS</span>
+<span class="sql-keyword">WHERE</span> Status <span class="sql-keyword">IN</span> (<span class="sql-string">'Pending'</span>, <span class="sql-string">'Processing'</span>) 
+  <span class="sql-keyword">AND</span> Total_Amount &gt; 200.00;</code></pre>
+                </div>
+
+                <!-- Aggregation and Grouping -->
+                <div class="code-card full-width">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-calculator"></i> 3. Aggregations (GROUP BY &amp; HAVING)</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-comment">-- Count orders & calculate total revenue by status</span>
+<span class="sql-keyword">SELECT</span> 
+    Status, 
+    <span class="sql-keyword">COUNT</span>(*) <span class="sql-keyword">AS</span> Total_Orders, 
+    <span class="sql-keyword">SUM</span>(Total_Amount) <span class="sql-keyword">AS</span> Total_Revenue,
+    <span class="sql-keyword">AVG</span>(Total_Amount) <span class="sql-keyword">AS</span> Average_Order_Value
+<span class="sql-keyword">FROM</span> <span class="sql-table">ORDERS</span>
+<span class="sql-keyword">GROUP BY</span> Status;
+
+<span class="sql-comment">-- Group products by category and filter categories with high total stock</span>
+<span class="sql-keyword">SELECT</span> 
+    Category, 
+    <span class="sql-keyword">COUNT</span>(*) <span class="sql-keyword">AS</span> Product_Count, 
+    <span class="sql-keyword">SUM</span>(Stock) <span class="sql-keyword">AS</span> Total_Stock,
+    <span class="sql-keyword">ROUND</span>(<span class="sql-keyword">AVG</span>(Price), 2) <span class="sql-keyword">AS</span> Avg_Price
+<span class="sql-keyword">FROM</span> <span class="sql-table">PRODUCT</span>
+<span class="sql-keyword">GROUP BY</span> Category
+<span class="sql-keyword">HAVING</span> Total_Stock &gt; 25
+<span class="sql-keyword">ORDER BY</span> Total_Stock <span class="sql-keyword">DESC</span>;</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: RELATIONAL JOINS -->
+            <div class="sql-tab-content" id="tab-joins">
+              <div class="sql-category-banner">
+                <div class="category-icon bg-emerald"><i class="fa-solid fa-link"></i></div>
+                <div>
+                  <h3>Relational JOIN Operations</h3>
+                  <p>Demonstrating how entities link together: CUSTOMER &rarr; ORDERS &rarr; ORDER_ITEM &rarr; PRODUCT.</p>
+                </div>
+              </div>
+
+              <div class="sql-cards-grid">
+                <!-- Two Table Join -->
+                <div class="code-card">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-network-wired"></i> 1. INNER JOIN (ORDERS &amp; CUSTOMER)</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-keyword">SELECT</span> 
+    O.Order_ID,
+    C.Customer_Name,
+    C.Email,
+    O.Order_Date,
+    O.Total_Amount,
+    O.Status
+<span class="sql-keyword">FROM</span> <span class="sql-table">ORDERS</span> O
+<span class="sql-keyword">JOIN</span> <span class="sql-table">CUSTOMER</span> C 
+  <span class="sql-keyword">ON</span> O.Customer_ID = C.Customer_ID
+<span class="sql-keyword">ORDER BY</span> O.Order_Date <span class="sql-keyword">DESC</span>;</code></pre>
+                </div>
+
+                <!-- Order Items with Product Join -->
+                <div class="code-card">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-network-wired"></i> 2. ORDER_ITEM &amp; PRODUCT JOIN</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-keyword">SELECT</span> 
+    OI.Order_Item_ID,
+    OI.Order_ID,
+    P.Product_Name,
+    P.Category,
+    OI.Quantity,
+    OI.Price <span class="sql-keyword">AS</span> Unit_Price,
+    (OI.Quantity * OI.Price) <span class="sql-keyword">AS</span> Subtotal
+<span class="sql-keyword">FROM</span> <span class="sql-table">ORDER_ITEM</span> OI
+<span class="sql-keyword">JOIN</span> <span class="sql-table">PRODUCT</span> P 
+  <span class="sql-keyword">ON</span> OI.Product_ID = P.Product_ID;</code></pre>
+                </div>
+
+                <!-- 4 Table Full Relational Join -->
+                <div class="code-card full-width">
+                  <div class="code-card-header">
+                    <span class="code-title"><i class="fa-solid fa-diagram-project"></i> 3. Complete 4-Entity Relational JOIN</span>
+                    <button class="btn-copy" onclick="app.copyCodeBlock(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <pre class="code-block"><code><span class="sql-comment">-- Full traversal across all 4 database tables</span>
+<span class="sql-keyword">SELECT</span> 
+    O.Order_ID,
+    C.Customer_Name,
+    C.Phone,
+    P.Product_Name,
+    P.Category,
+    OI.Quantity,
+    OI.Price <span class="sql-keyword">AS</span> Item_Price,
+    (OI.Quantity * OI.Price) <span class="sql-keyword">AS</span> Item_Total,
+    O.Status <span class="sql-keyword">AS</span> Order_Status
+<span class="sql-keyword">FROM</span> <span class="sql-table">ORDER_ITEM</span> OI
+<span class="sql-keyword">JOIN</span> <span class="sql-table">ORDERS</span> O    <span class="sql-keyword">ON</span> OI.Order_ID = O.Order_ID
+<span class="sql-keyword">JOIN</span> <span class="sql-table">CUSTOMER</span> C  <span class="sql-keyword">ON</span> O.Customer_ID = C.Customer_ID
+<span class="sql-keyword">JOIN</span> <span class="sql-table">PRODUCT</span> P   <span class="sql-keyword">ON</span> OI.Product_ID = P.Product_ID
+<span class="sql-keyword">ORDER BY</span> O.Order_ID, OI.Order_Item_ID;</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- 7. ABOUT PROJECT PAGE -->
+        <!-- ============================================== -->
+        <section class="page-view" id="view-about-project">
+          <div class="about-hero-card">
+            <div class="about-hero-content">
+              <span class="badge-tag">Academic DBMS Project</span>
+              <h2>E-Commerce Order Management System</h2>
+              <p class="about-lead">A comprehensive relational database dashboard engineered to manage customers, catalog products, purchase orders, and item line transactions with strict referential integrity.</p>
+              
+              <div class="about-meta-chips">
+                <div class="meta-chip"><i class="fa-solid fa-graduation-cap"></i> DBMS Course Project</div>
+                <div class="meta-chip"><i class="fa-solid fa-layer-group"></i> Relational Data Model (3NF)</div>
+                <div class="meta-chip"><i class="fa-solid fa-server"></i> MySQL / SQL Schema</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project Objective & Technologies Grid -->
+          <div class="about-details-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fa-solid fa-bullseye text-indigo"></i> Project Objective</h3>
+              </div>
+              <div class="card-body">
+                <p>To design, develop, and demonstrate a robust relational database management system for an e-commerce enterprise. The system handles:</p>
+                <ul class="styled-list">
+                  <li><strong>Customer Record Management:</strong> Storing unique customer identities, contact numbers, email addresses, and residential shipping addresses.</li>
+                  <li><strong>Inventory &amp; Product Catalog:</strong> Tracking product specifications, categorized listings, unit prices, and warehouse stock units.</li>
+                  <li><strong>Order Processing Lifecycle:</strong> Generating orders linked to customers with timestamped dates, computed total invoice values, and dynamic status tracking (Pending, Processing, Shipped, Delivered, Cancelled).</li>
+                  <li><strong>Order Item Normalization:</strong> Resolving the Many-to-Many (M:N) relationship between Orders and Products via a dedicated associative table with line-item pricing and quantities.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fa-solid fa-microchip text-purple"></i> Technologies Used</h3>
+              </div>
+              <div class="card-body">
+                <div class="tech-stack-list">
+                  <div class="tech-item">
+                    <div class="tech-icon bg-blue"><i class="fa-solid fa-database"></i></div>
+                    <div>
+                      <strong>SQL / MySQL</strong>
+                      <p>Relational schema design, Primary/Foreign Key constraints, normalization (1NF, 2NF, 3NF), and query execution.</p>
+                    </div>
+                  </div>
+                  <div class="tech-item">
+                    <div class="tech-icon bg-orange"><i class="fa-brands fa-html5"></i></div>
+                    <div>
+                      <strong>HTML5</strong>
+                      <p>Semantic markup, modal dialogues, responsive layout containers, and accessible UI controls.</p>
+                    </div>
+                  </div>
+                  <div class="tech-item">
+                    <div class="tech-icon bg-indigo"><i class="fa-brands fa-css3-alt"></i></div>
+                    <div>
+                      <strong>CSS3</strong>
+                      <p>CSS Custom Properties, Glassmorphism, Flexbox, CSS Grid, Dark/Light mode theme system, and smooth transitions.</p>
+                    </div>
+                  </div>
+                  <div class="tech-item">
+                    <div class="tech-icon bg-amber"><i class="fa-brands fa-js"></i></div>
+                    <div>
+                      <strong>Vanilla JavaScript (ES6+)</strong>
+                      <p>Client-side LocalStorage database engine, relational integrity checking, interactive SQL runner, and Chart.js integration.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Team Members Section -->
+          <div class="team-section">
+            <div class="section-title-box">
+              <h3><i class="fa-solid fa-users-gear text-indigo"></i> Project Team Members</h3>
+              <p>Department of Artificial Intelligence &amp; Data Science / CSE</p>
+            </div>
+
+            <div class="team-grid">
+              <!-- Member 1: Akhil -->
+              <div class="team-card lead-card">
+                <div class="team-badge">Team Lead</div>
+                <div class="team-avatar-box">
+                  <div class="team-avatar gradient-1">JV</div>
+                </div>
+                <div class="team-details">
+                  <h4>J. Akhil Naga Venkatesh</h4>
+                  <span class="roll-number">25B11AI416</span>
+                  <p class="team-role">DBMS Architecture &amp; System Lead</p>
+                </div>
+              </div>
+
+              <!-- Member 2: Supriya -->
+              <div class="team-card">
+                <div class="team-avatar-box">
+                  <div class="team-avatar gradient-2">DS</div>
+                </div>
+                <div class="team-details">
+                  <h4>M. Durga Veera Gani Supriya</h4>
+                  <span class="roll-number">25B11AI070</span>
+                  <p class="team-role">Database Design &amp; DDL/DML Schema</p>
+                </div>
+              </div>
+
+              <!-- Member 3: Rupa Devika -->
+              <div class="team-card">
+                <div class="team-avatar-box">
+                  <div class="team-avatar gradient-3">RD</div>
+                </div>
+                <div class="team-details">
+                  <h4>R. Rupa Devika</h4>
+                  <span class="roll-number">25B11AI024</span>
+                  <p class="team-role">UI/UX &amp; Dashboard Frontend</p>
+                </div>
+              </div>
+
+              <!-- Member 4: Madhura Haasini -->
+              <div class="team-card">
+                <div class="team-avatar-box">
+                  <div class="team-avatar gradient-4">MH</div>
+                </div>
+                <div class="team-details">
+                  <h4>A. Sri Madhura Haasini</h4>
+                  <span class="roll-number">25B11AI051</span>
+                  <p class="team-role">SQL Queries, JOINs &amp; Testing</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Relational Schema Entity Card -->
+          <div class="card erd-showcase-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><i class="fa-solid fa-project-diagram text-cyan"></i> Entity-Relationship (ER) Schema Specification</h3>
+                <p class="card-subtitle">Formal table attributes, keys, and relational cardinality specifications</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="erd-grid">
+                
+                <div class="erd-table-box">
+                  <div class="erd-table-header bg-indigo">
+                    <i class="fa-solid fa-table"></i> CUSTOMER
+                  </div>
+                  <ul class="erd-field-list">
+                    <li><span class="key-pill pk">PK</span> <strong>Customer_ID</strong> <em>VARCHAR(20)</em></li>
+                    <li><span>•</span> Customer_Name <em>VARCHAR(100)</em></li>
+                    <li><span>•</span> Email <em>VARCHAR(100)</em></li>
+                    <li><span>•</span> Phone <em>VARCHAR(20)</em></li>
+                    <li><span>•</span> Address <em>VARCHAR(255)</em></li>
+                  </ul>
+                </div>
+
+                <div class="erd-rel-arrow">
+                  <div class="rel-label">1 : N</div>
+                  <i class="fa-solid fa-arrow-right-long"></i>
+                </div>
+
+                <div class="erd-table-box">
+                  <div class="erd-table-header bg-purple">
+                    <i class="fa-solid fa-table"></i> ORDERS
+                  </div>
+                  <ul class="erd-field-list">
+                    <li><span class="key-pill pk">PK</span> <strong>Order_ID</strong> <em>VARCHAR(20)</em></li>
+                    <li><span class="key-pill fk">FK</span> <strong>Customer_ID</strong> <em>VARCHAR(20)</em></li>
+                    <li><span>•</span> Order_Date <em>DATE</em></li>
+                    <li><span>•</span> Total_Amount <em>DECIMAL(10,2)</em></li>
+                    <li><span>•</span> Status <em>VARCHAR(30)</em></li>
+                  </ul>
+                </div>
+
+                <div class="erd-rel-arrow">
+                  <div class="rel-label">1 : N</div>
+                  <i class="fa-solid fa-arrow-right-long"></i>
+                </div>
+
+                <div class="erd-table-box">
+                  <div class="erd-table-header bg-cyan">
+                    <i class="fa-solid fa-table"></i> ORDER_ITEM
+                  </div>
+                  <ul class="erd-field-list">
+                    <li><span class="key-pill pk">PK</span> <strong>Order_Item_ID</strong> <em>VARCHAR(20)</em></li>
+                    <li><span class="key-pill fk">FK</span> <strong>Order_ID</strong> <em>VARCHAR(20)</em></li>
+                    <li><span class="key-pill fk">FK</span> <strong>Product_ID</strong> <em>VARCHAR(20)</em></li>
+                    <li><span>•</span> Quantity <em>INT</em></li>
+                    <li><span>•</span> Price <em>DECIMAL(10,2)</em></li>
+                  </ul>
+                </div>
+
+                <div class="erd-rel-arrow">
+                  <div class="rel-label">N : 1</div>
+                  <i class="fa-solid fa-arrow-left-long"></i>
+                </div>
+
+                <div class="erd-table-box">
+                  <div class="erd-table-header bg-emerald">
+                    <i class="fa-solid fa-table"></i> PRODUCT
+                  </div>
+                  <ul class="erd-field-list">
+                    <li><span class="key-pill pk">PK</span> <strong>Product_ID</strong> <em>VARCHAR(20)</em></li>
+                    <li><span>•</span> Product_Name <em>VARCHAR(150)</em></li>
+                    <li><span>•</span> Category <em>VARCHAR(50)</em></li>
+                    <li><span>•</span> Price <em>DECIMAL(10,2)</em></li>
+                    <li><span>•</span> Stock <em>INT</em></li>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+      <!-- APPLICATION FOOTER -->
+      <footer class="app-footer">
+        <p>E-Commerce Order Management System &bull; College DBMS Project &bull; Built with HTML5, CSS3, &amp; Vanilla JavaScript</p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODALS -->
+  <!-- ============================================== -->
+
+  <!-- 1. CUSTOMER MODAL (Add / Edit) -->
+  <div class="modal" id="customerModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="customerModalTitle"><i class="fa-solid fa-user-plus"></i> Add New Customer</h3>
+          <button class="modal-close-btn" onclick="app.closeModal('customerModal')">&times;</button>
+        </div>
+        <form id="customerForm" onsubmit="app.handleCustomerSubmit(event)">
+          <div class="modal-body">
+            <input type="hidden" id="customerFormMode" value="add">
+            
+            <div class="form-group">
+              <label for="custInputId">Customer ID (Primary Key) <span class="required">*</span></label>
+              <input type="text" id="custInputId" class="form-control" placeholder="e.g. CUST-109" required>
+              <small class="form-hint">Unique identifier for the customer record</small>
+            </div>
+
+            <div class="form-group">
+              <label for="custInputName">Customer Name <span class="required">*</span></label>
+              <input type="text" id="custInputName" class="form-control" placeholder="e.g. Rahul Sharma" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="custInputEmail">Email Address <span class="required">*</span></label>
+                <input type="email" id="custInputEmail" class="form-control" placeholder="name@example.com" required>
+              </div>
+              <div class="form-group">
+                <label for="custInputPhone">Phone Number <span class="required">*</span></label>
+                <input type="text" id="custInputPhone" class="form-control" placeholder="+91 98765 43210" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="custInputAddress">Residential / Delivery Address <span class="required">*</span></label>
+              <textarea id="custInputAddress" class="form-control" rows="2" placeholder="Full postal address" required></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" onclick="app.closeModal('customerModal')">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="customerSubmitBtn">Save Customer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. PRODUCT MODAL (Add / Edit) -->
+  <div class="modal" id="productModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="productModalTitle"><i class="fa-solid fa-box-open"></i> Add New Product</h3>
+          <button class="modal-close-btn" onclick="app.closeModal('productModal')">&times;</button>
+        </div>
+        <form id="productForm" onsubmit="app.handleProductSubmit(event)">
+          <div class="modal-body">
+            <input type="hidden" id="productFormMode" value="add">
+
+            <div class="form-group">
+              <label for="prodInputId">Product ID (Primary Key) <span class="required">*</span></label>
+              <input type="text" id="prodInputId" class="form-control" placeholder="e.g. PROD-211" required>
+            </div>
+
+            <div class="form-group">
+              <label for="prodInputName">Product Name <span class="required">*</span></label>
+              <input type="text" id="prodInputName" class="form-control" placeholder="e.g. Wireless Noise-Cancelling Earbuds" required>
+            </div>
+
+            <div class="form-group">
+              <label for="prodInputCategory">Category <span class="required">*</span></label>
+              <input type="text" id="prodInputCategory" class="form-control" list="categorySuggestions" placeholder="e.g. Electronics, Audio, Apparel" required>
+              <datalist id="categorySuggestions">
+                <option value="Electronics">
+                <option value="Audio">
+                <option value="Computers">
+                <option value="Footwear">
+                <option value="Apparel">
+                <option value="Home & Kitchen">
+                <option value="Accessories">
+              </datalist>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prodInputPrice">Price ($) <span class="required">*</span></label>
+                <input type="number" id="prodInputPrice" step="0.01" min="0.01" class="form-control" placeholder="99.99" required>
+              </div>
+              <div class="form-group">
+                <label for="prodInputStock">Stock Quantity <span class="required">*</span></label>
+                <input type="number" id="prodInputStock" step="1" min="0" class="form-control" placeholder="50" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" onclick="app.closeModal('productModal')">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="productSubmitBtn">Save Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. ORDER MODAL (Create / Edit) -->
+  <div class="modal" id="orderModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="orderModalTitle"><i class="fa-solid fa-cart-plus"></i> Create New Order</h3>
+          <button class="modal-close-btn" onclick="app.closeModal('orderModal')">&times;</button>
+        </div>
+        <form id="orderForm" onsubmit="app.handleOrderSubmit(event)">
+          <div class="modal-body">
+            <input type="hidden" id="orderFormMode" value="add">
+
+            <div class="form-group">
+              <label for="ordInputId">Order ID (Primary Key) <span class="required">*</span></label>
+              <input type="text" id="ordInputId" class="form-control" placeholder="e.g. ORD-309" required>
+            </div>
+
+            <div class="form-group">
+              <label for="ordInputCustomer">Select Customer (Foreign Key: Customer_ID) <span class="required">*</span></label>
+              <select id="ordInputCustomer" class="form-control" required>
+                <!-- Populated dynamically -->
+              </select>
+              <small class="form-hint">Enforces referential integrity with the CUSTOMER entity</small>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ordInputDate">Order Date <span class="required">*</span></label>
+                <input type="date" id="ordInputDate" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="ordInputStatus">Order Status <span class="required">*</span></label>
+                <select id="ordInputStatus" class="form-control" required>
+                  <option value="Pending">Pending</option>
+                  <option value="Processing">Processing</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="ordInputTotal">Total Amount ($) <span class="required">*</span></label>
+              <input type="number" step="0.01" min="0" id="ordInputTotal" class="form-control" placeholder="0.00" required>
+              <small class="form-hint">Tip: Summed automatically when order items are added</small>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" onclick="app.closeModal('orderModal')">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="orderSubmitBtn">Save Order</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. ORDER ITEM MODAL (Add / Edit) -->
+  <div class="modal" id="orderItemModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="orderItemModalTitle"><i class="fa-solid fa-receipt"></i> Add Order Line Item</h3>
+          <button class="modal-close-btn" onclick="app.closeModal('orderItemModal')">&times;</button>
+        </div>
+        <form id="orderItemForm" onsubmit="app.handleOrderItemSubmit(event)">
+          <div class="modal-body">
+            <input type="hidden" id="orderItemFormMode" value="add">
+
+            <div class="form-group">
+              <label for="itemInputId">Order Item ID (Primary Key) <span class="required">*</span></label>
+              <input type="text" id="itemInputId" class="form-control" placeholder="e.g. ITEM-415" required>
+            </div>
+
+            <div class="form-group">
+              <label for="itemInputOrderId">Select Order (Foreign Key: Order_ID) <span class="required">*</span></label>
+              <select id="itemInputOrderId" class="form-control" required>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="itemInputProductId">Select Product (Foreign Key: Product_ID) <span class="required">*</span></label>
+              <select id="itemInputProductId" class="form-control" onchange="app.onProductSelectForOrderItem(this.value)" required>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="itemInputQty">Quantity <span class="required">*</span></label>
+                <input type="number" id="itemInputQty" min="1" step="1" value="1" class="form-control" oninput="app.updateItemSubtotalPreview()" required>
+              </div>
+              <div class="form-group">
+                <label for="itemInputPrice">Unit Price ($) <span class="required">*</span></label>
+                <input type="number" id="itemInputPrice" step="0.01" min="0.01" class="form-control" oninput="app.updateItemSubtotalPreview()" required>
+              </div>
+            </div>
+
+            <div class="computed-subtotal-box">
+              <span>Calculated Subtotal:</span>
+              <strong id="itemSubtotalPreview">$0.00</strong>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" onclick="app.closeModal('orderItemModal')">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="orderItemSubmitBtn">Save Order Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. VIEW DETAILS MODAL -->
+  <div class="modal" id="viewDetailsModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="viewModalTitle"><i class="fa-solid fa-eye"></i> Record Details</h3>
+          <button class="modal-close-btn" onclick="app.closeModal('viewDetailsModal')">&times;</button>
+        </div>
+        <div class="modal-body" id="viewModalBody">
+          <!-- Populated dynamically -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="app.closeModal('viewDetailsModal')">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. CONFIRM DELETE MODAL -->
+  <div class="modal" id="confirmDeleteModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header modal-header-danger">
+          <h3><i class="fa-solid fa-triangle-exclamation"></i> Confirm Delete</h3>
+          <button class="modal-close-btn" onclick="app.closeModal('confirmDeleteModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="deleteModalMessage">Are you sure you want to delete this record?</p>
+          <div class="fk-warning-box" id="deleteFkWarning" style="display: none;">
+            <i class="fa-solid fa-shield-halved"></i>
+            <div>
+              <strong>DBMS Constraint Alert:</strong>
+              <p id="deleteFkDetails">Foreign key dependencies detected.</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="app.closeModal('confirmDeleteModal')">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Record</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Script -->
+  <script src="script.js"></script>
+</body>
+</html>
