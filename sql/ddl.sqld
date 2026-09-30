@@ -1,0 +1,53 @@
+-- E-Commerce Order Management System
+-- DDL: Tables, Keys and Constraints
+
+CREATE DATABASE ecommerce_order_management;
+USE ecommerce_order_management;
+
+-- 1. CUSTOMER TABLE
+CREATE TABLE CUSTOMER (
+    Customer_ID INT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) NOT NULL UNIQUE,
+    Phone VARCHAR(15) UNIQUE,
+    Address VARCHAR(255) NOT NULL
+);
+
+-- 2. PRODUCT TABLE
+CREATE TABLE PRODUCT (
+    Product_ID INT PRIMARY KEY,
+    Product_Name VARCHAR(100) NOT NULL,
+    Price DECIMAL(10,2) NOT NULL CHECK (Price >= 0),
+    Stock INT NOT NULL DEFAULT 0 CHECK (Stock >= 0),
+    Category VARCHAR(50) NOT NULL
+);
+
+-- 3. ORDERS TABLE
+CREATE TABLE ORDERS (
+    Order_ID INT PRIMARY KEY,
+    Order_Date DATE NOT NULL,
+    Total_Amount DECIMAL(10,2) NOT NULL CHECK (Total_Amount >= 0),
+    Order_Status VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    Customer_ID INT NOT NULL,
+    
+    CONSTRAINT FK_Orders_Customer
+        FOREIGN KEY (Customer_ID)
+        REFERENCES CUSTOMER(Customer_ID)
+);
+
+-- 4. ORDER_ITEM TABLE
+CREATE TABLE ORDER_ITEM (
+    Order_Item_ID INT PRIMARY KEY,
+    Order_ID INT NOT NULL,
+    Product_ID INT NOT NULL,
+    Quantity INT NOT NULL CHECK (Quantity > 0),
+    SubTotal DECIMAL(10,2) NOT NULL CHECK (SubTotal >= 0),
+
+    CONSTRAINT FK_OrderItem_Order
+        FOREIGN KEY (Order_ID)
+        REFERENCES ORDERS(Order_ID),
+
+    CONSTRAINT FK_OrderItem_Product
+        FOREIGN KEY (Product_ID)
+        REFERENCES PRODUCT(Product_ID)
+);
